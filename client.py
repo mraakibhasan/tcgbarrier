@@ -1,9 +1,10 @@
 import socket
 import threading
 import pyautogui
+import time
 
 # Client configuration
-SERVER_IP = '192.168.x.x'  # Replace with the server's IP address
+SERVER_IP = '192.168.0.104'  # Replace with the server's IP address
 SERVER_PORT = 5000
 
 # Function to handle incoming server messages and simulate mouse/keyboard
@@ -14,11 +15,17 @@ def handle_server_message(client_socket):
             if not data:
                 break
             data_parts = data.split(',')
-            
+
+            # Log the incoming data for debugging purposes
+            print(f"Received data: {data}")
+
             if data_parts[0] == "MOUSE":
+                # Extract the coordinates and mouse action
                 x, y = int(data_parts[1]), int(data_parts[2])
                 button = data_parts[3]
                 pressed = data_parts[4] == 'True'
+
+                print(f"Moving mouse to ({x}, {y})")  # Debugging mouse movement
 
                 if button is None:
                     # Move the cursor to the given coordinates
@@ -29,10 +36,12 @@ def handle_server_message(client_socket):
                     pyautogui.rightClick(x, y)
 
             elif data_parts[0] == "KEYBOARD":
+                # Handle keyboard events
                 key = data_parts[1]
                 pressed = data_parts[2] == 'True'
-                
-                # Handle special key cases (e.g., key format varies for control, shift)
+
+                print(f"Keyboard event: {key}, pressed: {pressed}")
+
                 if pressed:
                     pyautogui.press(key)
                 else:
